@@ -108,19 +108,30 @@ function stampaPost(item, index) {
 // CLICK "MI PIACE"
 
 let likeButtonsCollection = document.getElementsByClassName("like-button");
-console.log(likeButtonsCollection);
+// console.log(likeButtonsCollection);
 let likeButtonsArray = [...likeButtonsCollection];
 
 likeButtonsArray.forEach(pressButton);
 
 function pressButton(items, index) {
   likeButtonsArray[index].addEventListener("click", (event) => {
-    likeButtonsArray[index].classList.toggle("like-button--liked");
-    console.log(document.getElementById(`like-counter-${index + 1}`));
+    likeButtonsArray[index].classList.add("like-button--liked");
+    // console.log(document.getElementById(`like-counter-${index + 1}`));
     let numeroLikes = document.getElementById(`like-counter-${index + 1}`);
     numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1;
-    if ((numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1)) {
-      numeroLikes.innerText = parseInt(numeroLikes.innerText) - 1;
+    // console.log(numeroLikes.innerText);
+    // console.log(posts[index].likes);
+    if ((numeroLikes.innerText = posts[index].likes + 1)) {
+      // console.log(likeButtonsArray[index]);
+      likeButtonsArray[index].setAttribute("id", `button${index}`);
+      // console.log(likeButtonsArray[index]);
+      let likeMaggiorati = document.getElementById(`button${index}`);
+      likeMaggiorati.addEventListener("click", function () {
+        likeButtonsArray[index].classList.remove("like-button--liked");
+        numeroLikes.innerText = parseInt(numeroLikes.innerText) - 1;
+        likeButtonsArray[index].removeAttribute("id", `button${index}`);
+        pressButton(items, index);
+      });
     }
   });
 }
