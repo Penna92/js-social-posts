@@ -62,12 +62,14 @@ const posts = [
 ];
 // console.log(posts[0].id);
 
+let template = "";
+
 // FUNZIONE CHE STAMPA LA LISTA DI POSTS
 
 posts.forEach(stampaPost);
 
 function stampaPost(item, index) {
-  let template = `
+  template = `
     <div class="post" id="${posts[index].id}">
         <div class="post__header">
             <div class="post-meta">                    
@@ -87,17 +89,38 @@ function stampaPost(item, index) {
         <div class="post__footer">
             <div class="likes js-likes">
                 <div class="likes__cta">
-                    <a class="like-button  js-like-button" href="#" data-postid="1">
+                    <a class="like-button  js-like-button" href="#" data-postid="${posts[index].id}">
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
                     </a>
                 </div>
                 <div class="likes__counter">
-                    Piace a <b id="like-counter-1" class="js-likes-counter">80</b> persone
+                    Piace a <b id="like-counter-${posts[index].id}" class="js-likes-counter">${posts[index].likes}</b> persone
                 </div>
             </div> 
         </div>            
     </div>        
     `;
+
   document.getElementById("container").innerHTML += template;
+}
+
+// CLICK "MI PIACE"
+
+let likeButtonsCollection = document.getElementsByClassName("like-button");
+console.log(likeButtonsCollection);
+let likeButtonsArray = [...likeButtonsCollection];
+
+likeButtonsArray.forEach(pressButton);
+
+function pressButton(items, index) {
+  likeButtonsArray[index].addEventListener("click", (event) => {
+    likeButtonsArray[index].classList.toggle("like-button--liked");
+    console.log(document.getElementById(`like-counter-${index + 1}`));
+    let numeroLikes = document.getElementById(`like-counter-${index + 1}`);
+    numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1;
+    if ((numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1)) {
+      numeroLikes.innerText = parseInt(numeroLikes.innerText) - 1;
+    }
+  });
 }
