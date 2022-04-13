@@ -42,7 +42,7 @@ const posts = [
     media: "https://unsplash.it/600/400?image=24",
     author: {
       name: "Luca Formicola",
-      image: "",
+      image: null,
     },
     likes: 56,
     created: "2021-04-03",
@@ -60,25 +60,43 @@ const posts = [
     created: "2021-03-05",
   },
 ];
-// console.log(posts[0].id);
+
+// console.log(posts[3].author.image);
+
+// FUNZIONE CHE STAMPA LA LISTA DI POSTS CON DATA IN FORMATO ITALIANO E INSERISCE LE INIZIALI DEL NOME SE L'IMMAGINE E' NULL
 
 let template = "";
-
-// FUNZIONE CHE STAMPA LA LISTA DI POSTS
 
 posts.forEach(stampaPost);
 
 function stampaPost(item, index) {
+
+  let replaceImage = posts[index].author.image;
+  let replacedImage = `<img class="profile-pic" src=${replaceImage}>`;
+  console.log(replaceImage);
+  if (replaceImage === null) {
+    replacedImage = posts[index].author.name
+      .match(/(\b\S)?/g)
+      .join("")
+      .toUpperCase();
+    console.log(replacedImage);
+    console.log(replaceImage);
+  }
   template = `
     <div class="post" id="${posts[index].id}">
         <div class="post__header">
             <div class="post-meta">                    
                 <div class="post-meta__icon">
-                    <img class="profile-pic" src=${posts[index].author.image}>                    
+                    ${replacedImage}                   
                 </div>
                 <div class="post-meta__data">
-                    <div class="post-meta__author">${posts[index].author.name}</div>
-                    <div class="post-meta__time">${posts[index].created}</div>
+                    <div class="post-meta__author">${
+                      posts[index].author.name
+                    }</div>
+                    <div class="post-meta__time">${posts[index].created
+                      .split("-")
+                      .reverse()
+                      .join("-")}</div> 
                 </div>                    
             </div>
         </div>
@@ -89,13 +107,19 @@ function stampaPost(item, index) {
         <div class="post__footer">
             <div class="likes js-likes">
                 <div class="likes__cta">
-                    <a class="like-button  js-like-button" href="#" data-postid="${posts[index].id}">
+                    <a class="like-button  js-like-button" href="#" data-postid="${
+                      posts[index].id
+                    }">
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
                     </a>
                 </div>
                 <div class="likes__counter">
-                    Piace a <b id="like-counter-${posts[index].id}" class="js-likes-counter">${posts[index].likes}</b> persone
+                    Piace a <b id="like-counter-${
+                      posts[index].id
+                    }" class="js-likes-counter">${
+                      posts[index].likes
+                    }</b> persone
                 </div>
             </div> 
         </div>            
@@ -110,28 +134,46 @@ function stampaPost(item, index) {
 let likeButtonsCollection = document.getElementsByClassName("like-button");
 // console.log(likeButtonsCollection);
 let likeButtonsArray = [...likeButtonsCollection];
+const likedPosts = [];
 
 likeButtonsArray.forEach(pressButton);
 
 function pressButton(items, index) {
   likeButtonsArray[index].addEventListener("click", (event) => {
-    likeButtonsArray[index].classList.add("like-button--liked");
+    // console.log(likedPosts);
     // console.log(document.getElementById(`like-counter-${index + 1}`));
+    let postsId = "Id post: " + (index + 1);
+    console.log(postsId);
     let numeroLikes = document.getElementById(`like-counter-${index + 1}`);
-    numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1;
+    likeButtonsArray[index].classList.add("like-button--liked");
     // console.log(numeroLikes.innerText);
     // console.log(posts[index].likes);
-    if ((numeroLikes.innerText = posts[index].likes + 1)) {
+    if (numeroLikes.innerText == posts[index].likes) {
+      numeroLikes.innerText = parseInt(numeroLikes.innerText) + 1;
+      if (!likedPosts.includes(postsId)) {
+        likedPosts.push(postsId);
+        console.log(likedPosts);
+      }
+      // console.log(numeroLikes.innerText);
+      // console.log(posts[index].likes);
+      // pressButton(items, index);
+    } else if (numeroLikes.innerText == posts[index].likes + 1) {
       // console.log(likeButtonsArray[index]);
       likeButtonsArray[index].setAttribute("id", `button${index}`);
       // console.log(likeButtonsArray[index]);
-      let likeMaggiorati = document.getElementById(`button${index}`);
-      likeMaggiorati.addEventListener("click", function () {
-        likeButtonsArray[index].classList.remove("like-button--liked");
-        numeroLikes.innerText = parseInt(numeroLikes.innerText) - 1;
-        likeButtonsArray[index].removeAttribute("id", `button${index}`);
-        pressButton(items, index);
-      });
+      // likedPosts.splice((index, 1));
+      // console.log(likedPosts);
+      likeButtonsArray[index].classList.remove("like-button--liked");
+      numeroLikes.innerText = parseInt(numeroLikes.innerText) - 1;
+      likeButtonsArray[index].removeAttribute("id", `button${index}`);
+      //   pressButton(items, index);
+      //   console.log(numeroLikes.innerText);
+      //   console.log(posts[index].likes);
+      if (likedPosts.includes(postsId)) {
+        likedPosts.splice(index);
+        // postsId = "ciaoo";
+        console.log(likedPosts);
+      }
     }
   });
 }
